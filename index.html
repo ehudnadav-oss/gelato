@@ -18,9 +18,30 @@
     margin: 0 auto; max-width: 480px; padding: 0 20px calc(96px + env(safe-area-inset-bottom));
     color: var(--ink); font: 400 17px/1.55 Heebo, sans-serif;
     background-color: var(--paper);
-    background-image: radial-gradient(rgba(58,41,28,.05) 1px, transparent 1px);
-    background-size: 7px 7px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .23 0 0 0 0 .16 0 0 0 0 .11 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"), radial-gradient(ellipse at 50% 0, rgba(255,250,238,.55), transparent 60%);
+    background-size: 160px 160px, 100% 700px; background-repeat: repeat, no-repeat;
+    position: relative; overflow-x: clip;
   }
+  .deco { position: absolute; pointer-events: none; opacity: .5; mix-blend-mode: multiply; z-index: 0;
+    -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 45%, transparent 100%);
+            mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 45%, transparent 100%); }
+  .anchor { position: relative; }
+  .ico { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; vertical-align: -4px; }
+  h2 .ico { width: 22px; height: 22px; color: var(--gold); margin-inline-end: 6px; vertical-align: -3px; }
+  .fname { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+  .tag { font-size: 12px; font-weight: 500; color: var(--ink-soft); border: 1px solid rgba(166,132,74,.6); padding: 0 6px; border-radius: 2px; line-height: 1.5; }
+  .flavor[aria-pressed="true"] .tag { color: #fff; border-color: rgba(255,255,255,.6); }
+  .facts { list-style: none; padding: 0; margin: 0 0 6px; display: grid; gap: 4px; justify-content: center; }
+  .facts li { display: flex; align-items: center; gap: 8px; }
+  .facts .ico { color: var(--gold); }
+  .fill { position: relative; width: 120px; margin: 4px auto 10px; }
+  .fill img { display: block; width: 100%; }
+  .fill .base { filter: grayscale(1); opacity: .35; }
+  .fill .top { position: absolute; inset: 0; animation: fillup 1.4s ease-out both; }
+  @keyframes fillup { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+  .done { text-align: center; }
+  #done:focus { outline: none; }
+  .done ul { list-style: none; padding: 0; }
   h1, h2, .price { font-family: "Frank Ruhl Libre", serif; }
   .center { text-align: center; }
   .soft { mix-blend-mode: multiply;
@@ -95,17 +116,24 @@
   }
   .send:disabled { opacity: .6; cursor: not-allowed; }
   .done h2 { font-size: 26px; }
-  .done ul { padding-inline-start: 20px; }
   .swap { animation: fade .25s ease-out; }
   @keyframes fade { from { opacity: 0; } }
-  @media (prefers-reduced-motion: reduce) { .swap, .line.flash { animation: none; } .bar, .flavor { transition: none; } html { scroll-behavior: auto; } }
+  @media (prefers-reduced-motion: reduce) { .swap, .line.flash, .fill .top { animation: none; } .bar, .flavor { transition: none; } html { scroll-behavior: auto; } }
   html { scroll-behavior: smooth; }
   footer { margin-top: 36px; text-align: center; color: var(--ink-soft); font-size: 15px; }
-  .wa { display: inline-flex; align-items: center; min-height: 44px; color: var(--wa); font-weight: 700; font-size: 17px; }
+  .wa { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--wa); font-weight: 700; font-size: 17px; }
   .hidden { display: none !important; }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3c3 4.2 6 7.6 6 11.2a6 6 0 0 1-12 0C6 10.6 9 7.2 12 3z"/><path d="M9.5 15a2.5 2.5 0 0 0 2.5 2.5"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19C5 10.5 10 5 19.5 4.5 19.5 13.5 14 19 5 19z"/><path d="M5 19l9-9"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-11a7 7 0 0 1 14 0c0 4.7-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14" rx="1"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></symbol>
+  <symbol id="i-call" viewBox="0 0 24 24"><path d="M6 4h3.2l1.6 4.2-2 1.3a10 10 0 0 0 5.7 5.7l1.3-2 4.2 1.6V18a2 2 0 0 1-2 2A15 15 0 0 1 4 6a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4.5 19.5l1.2-3.6A8 8 0 1 1 8.6 18.6z"/></symbol>
+</svg>
 <script>
   // Fill these in after creating the Google Form (see README.md).
   const FORM = {
@@ -119,6 +147,8 @@
   const MENU_CSV = "https://docs.google.com/spreadsheets/d/15h9Ni9Jbbqc5319fKYvOvXE94kb37eKQyTR32AQW_XA/gviz/tq?tqx=out:csv&sheet=%D7%AA%D7%A4%D7%A8%D7%99%D7%98";
 </script>
 
+<img class="deco" src="swirl.jpg" alt="" style="left:2px; top:24px; width:44px">
+<img class="deco" src="swirlr.jpg" alt="" style="right:4px; top:110px; width:40px">
 <header class="center">
   <img class="cup soft" src="cup.jpg" alt="גביע ג'לטו">
   <p class="ribbon">טבעי שזה טעים</p>
@@ -138,7 +168,8 @@
 
 <div class="orn" aria-hidden="true"><span></span></div>
 
-<main id="main">
+<main id="main" class="anchor">
+  <img class="deco" src="olive.jpg" alt="" style="left:0; top:-34px; width:72px">
   <h2 class="order-h">ההזמנה</h2>
   <form id="order" novalidate>
     <div id="lines"></div>
@@ -167,8 +198,9 @@
   </form>
 
   <div id="done" class="done hidden" tabindex="-1">
+    <div class="fill" aria-hidden="true"><img class="base soft" src="cup.jpg" alt=""><img class="top soft" src="cup.jpg" alt=""></div>
     <h2>ההזמנה נשלחה</h2>
-    <p>אהוד יצור קשר</p>
+    <p><svg class="ico"><use href="#i-call"/></svg> אהוד יצור קשר</p>
     <ul id="sum-lines"></ul>
     <p class="total" id="sum-total"></p>
     <p id="sum-who"></p>
@@ -176,10 +208,14 @@
   </div>
 </main>
 
-<footer>
+<footer class="anchor">
+  <img class="deco" src="coconut.jpg" alt="" style="left:0; top:0; width:80px">
   <img class="fruit soft" src="fruit.jpg" alt="">
-  <p>הזמנה מראש · איסוף עצמי מקיבוץ גלאון</p>
-  <a class="wa" href="https://wa.me/972507604772" target="_blank" rel="noopener">וואטסאפ לאהוד · 050-7604772</a>
+  <ul class="facts">
+    <li><svg class="ico"><use href="#i-cal"/></svg>הזמנה מראש</li>
+    <li><svg class="ico"><use href="#i-pin"/></svg>איסוף עצמי מקיבוץ גלאון</li>
+  </ul>
+  <a class="wa" href="https://wa.me/972507604772" target="_blank" rel="noopener"><svg class="ico"><use href="#i-chat"/></svg>וואטסאפ לאהוד · 050-7604772</a>
 </footer>
 
 <div class="bar off" id="bar"><a href="#main"><span>להזמנה</span><span id="bar-total"></span></a></div>
@@ -193,6 +229,8 @@
     "טבעוני": ["פירות יער", "קוקוס", "מנגו"]
   };
   let PRICES = {}; // flavor -> price; missing = DEFAULT_PRICE
+  let TAGS = { "תמר ואגוז מלך": "אגוזים", "פיסטוק": "אגוזים", "שקדים": "אגוזים", "בננה תמר פקאן קלוי": "אגוזים" };
+  const groupIcon = g => g.includes("טבעוני") ? "i-leaf" : g.includes("חלבי") ? "i-drop" : "";
   const DEFAULT_PRICE = 100;
   const priceOf = f => PRICES[f] ?? DEFAULT_PRICE;
   const $ = id => document.getElementById(id);
@@ -217,34 +255,42 @@
     return rows;
   }
 
-  // Sheet columns: קבוצה | טעם | מחיר. Header row first; blank rows are skipped.
+  // Sheet columns: קבוצה | טעם | מחיר | תגית. Header row first; blank rows are skipped.
   async function loadMenu() {
     if (!MENU_CSV) return;
     try {
       const res = await fetch(MENU_CSV, { cache: "no-store" });
       if (!res.ok) throw 0;
-      const groups = {}, prices = {};
-      parseCsv(await res.text()).slice(1).forEach(([g, f, p]) => {
+      const groups = {}, prices = {}, tags = {};
+      const rows = parseCsv(await res.text()), hasTags = (rows[0][3] || "").trim();
+      rows.slice(1).forEach(([g, f, p, t]) => {
         g = (g || "").trim(); f = (f || "").trim();
         if (!g || !f) return;
         (groups[g] ||= []).push(f);
         const n = Number(String(p || "").replace(/[^\d.]/g, ""));
         if (n > 0) prices[f] = n;
+        if ((t || "").trim()) tags[f] = t.trim();
       });
-      if (Object.keys(groups).length) { GROUPS = groups; PRICES = prices; }
+      if (Object.keys(groups).length) { GROUPS = groups; PRICES = prices; if (hasTags) TAGS = tags; }
     } catch { /* keep the built-in menu */ }
   }
 
   function renderMenu() {
     const box = $("menu"); box.innerHTML = "";
     for (const [g, fs] of Object.entries(GROUPS)) {
-      const h = document.createElement("h2"); h.textContent = g;
+      const h = document.createElement("h2");
+      const icon = groupIcon(g);
+      if (icon) h.innerHTML = `<svg class="ico" aria-hidden="true"><use href="#${icon}"/></svg>`;
+      h.append(g);
       const sub = document.createElement("span"); sub.className = "sub"; sub.textContent = `${fs.length} טעמים`; h.appendChild(sub);
       const ul = document.createElement("ul"); ul.className = "flavors";
       fs.forEach(f => {
         const li = document.createElement("li");
         const b = document.createElement("button");
-        b.type = "button"; b.className = "flavor"; b.textContent = f; b.dataset.flavor = f;
+        b.type = "button"; b.className = "flavor"; b.dataset.flavor = f;
+        const name = document.createElement("span"); name.className = "fname"; name.textContent = f;
+        if (TAGS[f]) { const t = document.createElement("span"); t.className = "tag"; t.textContent = TAGS[f]; name.appendChild(t); }
+        b.appendChild(name);
         b.addEventListener("click", () => tapFlavor(f));
         li.appendChild(b); ul.appendChild(li);
       });
@@ -377,6 +423,7 @@
     $("sum-who").textContent = `${v.name} · ${v.phone}`;
     $("order").classList.add("hidden");
     $("done").classList.remove("hidden"); $("done").classList.add("swap");
+    const top = $("done").querySelector(".top"); top.style.animation = "none"; void top.offsetWidth; top.style.animation = "";
     $("main").scrollIntoView({ block: "start" }); $("done").focus();
   }
 
