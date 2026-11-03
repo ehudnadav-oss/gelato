@@ -35,7 +35,10 @@ then drag the `site/` folder onto app.netlify.com/drop. Rename the site in Site 
    | טבעוני | מנגו | 100 |
 
    One row per flavor. Groups show in the order they first appear. Delete a row to hide a flavor.
-   Optional 4th column `תגית` (e.g. אגוזים, חדש, עונתי) shows a small tag on the flavor.
+   Optional columns (any order, matched by header):
+   - `תגית` — small tag next to the name (חדש, עונתי)
+   - `תיאור` — one line on what it's made of
+   - `אלרגנים` — shown as "מכיל: …" (e.g. אגוזים, גלוטן)
    Empty מחיר = 100 ₪.
 2. File → Share → **Publish to web** → choose the `תפריט` tab (not "Entire document") → **CSV** → Publish → copy the link.
 3. Paste it into `MENU_CSV` in `index.html`.
