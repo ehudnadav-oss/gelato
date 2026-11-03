@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ג'לטו אהוד · הזמנה מראש</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700&family=Heebo:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F3E4C8; --ink: #3A291C; --ink-soft: #6B5344;
+    --gold: #A6844A; --fig: #8C4A48; --wa: #1F8A4C;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body {
+    margin: 0 auto; max-width: 480px; padding: 0 20px 40px;
+    color: var(--ink); font: 400 17px/1.55 Heebo, sans-serif;
+    background-color: var(--paper);
+    background-image: radial-gradient(rgba(58,41,28,.05) 1px, transparent 1px);
+    background-size: 7px 7px;
+  }
+  h1, h2, .price { font-family: "Frank Ruhl Libre", serif; }
+  .center { text-align: center; }
+  .fruit { display: block; width: 90px; margin: 0 auto 8px; mix-blend-mode: multiply; }
+  .cup { display: block; width: 210px; margin: 16px auto 0; mix-blend-mode: multiply; border-radius: 50%; }
+  .ribbon { margin: 8px 0 0; color: var(--ink-soft); font-size: 15px; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 6px 0 12px; }
+  .promise { margin: 0; font-weight: 500; }
+  hr { border: 0; border-top: 1px solid var(--gold); width: 45%; margin: 28px auto; }
+  h2 { font-size: 22px; margin: 0 0 6px; }
+  .flavors { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 0 0 18px; padding: 0; list-style: none; }
+  .flavor {
+    min-height: 44px; padding: 8px 12px; border: 1px solid transparent; border-radius: 2px;
+    background: none; color: var(--ink); font: 500 17px Heebo, sans-serif; cursor: pointer;
+    text-decoration: underline; text-decoration-color: rgba(107,83,68,.35); text-underline-offset: 5px;
+  }
+  .flavor[aria-pressed="true"] { background: var(--fig); color: #fff; text-decoration: none; }
+  .flavor[aria-pressed="true"]::before { content: "✓ "; }
+  .pack { border: 3px double var(--gold); padding: 16px; margin: 8px 0; }
+  .pack h2 { margin: 0; }
+  .pack p { margin: 2px 0; }
+  .price { font-size: 30px; font-weight: 700; }
+  label, .lbl { display: block; font-weight: 500; font-size: 15px; margin-bottom: 4px; }
+  input, select, textarea {
+    width: 100%; min-height: 44px; padding: 8px 10px; font: 17px Heebo, sans-serif; color: var(--ink);
+    background: rgba(255,255,255,.35); border: 1px solid var(--ink-soft); border-radius: 2px;
+  }
+  textarea { min-height: 80px; resize: vertical; }
+  :focus-visible { outline: 3px solid var(--fig); outline-offset: 2px; }
+  .line { display: grid; grid-template-columns: 1fr 84px 44px; gap: 8px; align-items: end; margin-bottom: 12px; }
+  .line.flash { animation: flash 1s; }
+  @keyframes flash { from { background: rgba(140,74,72,.18); } }
+  .remove, .textbtn {
+    min-height: 44px; min-width: 44px; background: none; border: 0; color: var(--ink-soft);
+    font: 500 16px Heebo, sans-serif; cursor: pointer; text-decoration: underline; text-underline-offset: 4px;
+  }
+  .remove { font-size: 22px; text-decoration: none; }
+  .total { font-weight: 700; margin: 8px 0 20px; }
+  .field { margin-bottom: 14px; }
+  .err { color: var(--fig); font-size: 14px; font-weight: 500; margin: 4px 0 0; min-height: 0; }
+  .err:empty { display: none; }
+  .note { color: var(--ink-soft); font-size: 15px; }
+  .send {
+    width: 100%; min-height: 52px; border: 0; border-radius: 2px; background: var(--fig); color: #fff;
+    font: 700 19px Heebo, sans-serif; cursor: pointer;
+  }
+  .send:disabled { opacity: .6; cursor: not-allowed; }
+  .done h2 { font-size: 26px; }
+  .done ul { padding-inline-start: 20px; }
+  .swap { animation: fade .25s ease-out; }
+  @keyframes fade { from { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .swap, .line.flash { animation: none; } html { scroll-behavior: auto; } }
+  html { scroll-behavior: smooth; }
+  footer { margin-top: 36px; text-align: center; color: var(--ink-soft); font-size: 15px; }
+  .wa { display: inline-flex; align-items: center; min-height: 44px; color: var(--wa); font-weight: 700; font-size: 17px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<script>
+  // Fill these in after creating the Google Form (see README.md).
+  const FORM = {
+    action: "https://docs.google.com/forms/d/e/1FAIpQLSeR30_jkkZstijzG0MTYcCbQeI6NSvvlmzi7ZHzazYwlLcnIQ/formResponse",
+    entries: {
+      name: "entry.1431246928", phone: "entry.443005363", detail: "entry.1346604517",
+      packs: "entry.1320156836", total: "entry.1677036769", note: "entry.1185680674"
+    }
+  };
+  // The "תפריט" tab, published as CSV (see README.md). Empty = use the built-in menu below.
+  const MENU_CSV = "https://docs.google.com/spreadsheets/d/15h9Ni9Jbbqc5319fKYvOvXE94kb37eKQyTR32AQW_XA/gviz/tq?tqx=out:csv&sheet=%D7%AA%D7%A4%D7%A8%D7%99%D7%98";
+</script>
+
+<header class="center">
+  <img class="cup" src="cup.jpg" alt="גביע ג'לטו">
+  <p class="ribbon">טבעי שזה טעים</p>
+  <h1>ג'לטו איטלקי בעבודת יד</h1>
+  <p class="promise">טעם עשיר, מחומרי גלם טבעיים ואורגניים<br>ללא אבקות, מייצבים או תוספת סוכר</p>
+</header>
+
+<hr>
+
+<section aria-label="טעמים" id="menu"></section>
+
+<div class="pack center">
+  <h2>אריזה משפחתית</h2>
+  <p>800 גרם, טעם אחד לבחירה</p>
+  <p class="price" id="pack-price">100 ₪</p>
+</div>
+
+<hr>
+
+<main id="main">
+  <form id="order" novalidate>
+    <div id="lines"></div>
+    <button type="button" class="textbtn" id="add">+ הוספת טעם</button>
+    <p class="err" id="err-lines"></p>
+    <p class="total" id="total" aria-live="polite"></p>
+
+    <div class="field">
+      <label for="name">שם</label>
+      <input id="name" autocomplete="name" required>
+      <p class="err" id="err-name"></p>
+    </div>
+    <div class="field">
+      <label for="phone">טלפון</label>
+      <input id="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" style="text-align:right" required>
+      <p class="err" id="err-phone"></p>
+    </div>
+    <div class="field">
+      <label for="note">הערה</label>
+      <textarea id="note" placeholder="משהו שאהוד צריך לדעת?"></textarea>
+    </div>
+
+    <p class="note">לכל אריזה טעם אחד. אפשר לבחור כמה אריזות, כל אחת בטעם אחר.</p>
+    <button type="submit" class="send" id="send" disabled>שליחת הזמנה</button>
+    <p class="err" id="err-send" aria-live="polite"></p>
+  </form>
+
+  <div id="done" class="done hidden" tabindex="-1">
+    <h2>ההזמנה נשלחה</h2>
+    <p>אהוד יצור קשר</p>
+    <ul id="sum-lines"></ul>
+    <p class="total" id="sum-total"></p>
+    <p id="sum-who"></p>
+    <button type="button" class="textbtn" id="again">שליחת הזמנה נוספת</button>
+  </div>
+</main>
+
+<footer>
+  <img class="fruit" src="fruit.jpg" alt="">
+  <p>הזמנה מראש · איסוף עצמי מקיבוץ גלאון</p>
+  <a class="wa" href="https://wa.me/972507604772" target="_blank" rel="noopener">וואטסאפ לאהוד · 050-7604772</a>
+</footer>
+
+<iframe name="sink" id="sink" class="hidden" title="sink"></iframe>
+
+<script>
+  // Fallback menu, used when MENU_CSV is empty or can't be loaded.
+  let GROUPS = {
+    "חלבי": ["תמר ואגוז מלך", "פיסטוק", "שקדים", "בננה תמר פקאן קלוי", "לואיזה לימונית", "קקאו הל"],
+    "טבעוני": ["פירות יער", "קוקוס", "מנגו"]
+  };
+  let PRICES = {}; // flavor -> price; missing = DEFAULT_PRICE
+  const DEFAULT_PRICE = 100;
+  const priceOf = f => PRICES[f] ?? DEFAULT_PRICE;
+  const $ = id => document.getElementById(id);
+  const connected = FORM.action && Object.values(FORM.entries).every(Boolean);
+
+  let lines = [{ flavor: "", qty: 1 }];
+  let touched = { name: false, phone: false };
+
+  const phoneOk = v => /^05\d{8}$/.test(v.replace(/[\s-]/g, ""));
+
+  function parseCsv(text) {
+    const rows = []; let row = [], cell = "", q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) { if (c === '"' && text[i + 1] === '"') { cell += '"'; i++; } else if (c === '"') q = false; else cell += c; }
+      else if (c === '"') q = true;
+      else if (c === ",") { row.push(cell); cell = ""; }
+      else if (c === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
+      else if (c !== "\r") cell += c;
+    }
+    row.push(cell); rows.push(row);
+    return rows;
+  }
+
+  // Sheet columns: קבוצה | טעם | מחיר. Header row first; blank rows are skipped.
+  async function loadMenu() {
+    if (!MENU_CSV) return;
+    try {
+      const res = await fetch(MENU_CSV, { cache: "no-store" });
+      if (!res.ok) throw 0;
+      const groups = {}, prices = {};
+      parseCsv(await res.text()).slice(1).forEach(([g, f, p]) => {
+        g = (g || "").trim(); f = (f || "").trim();
+        if (!g || !f) return;
+        (groups[g] ||= []).push(f);
+        const n = Number(String(p || "").replace(/[^\d.]/g, ""));
+        if (n > 0) prices[f] = n;
+      });
+      if (Object.keys(groups).length) { GROUPS = groups; PRICES = prices; }
+    } catch { /* keep the built-in menu */ }
+  }
+
+  function renderMenu() {
+    const box = $("menu"); box.innerHTML = "";
+    for (const [g, fs] of Object.entries(GROUPS)) {
+      const h = document.createElement("h2"); h.textContent = g;
+      const ul = document.createElement("ul"); ul.className = "flavors";
+      fs.forEach(f => {
+        const li = document.createElement("li");
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "flavor"; b.textContent = f; b.dataset.flavor = f;
+        b.addEventListener("click", () => tapFlavor(f));
+        li.appendChild(b); ul.appendChild(li);
+      });
+      box.append(h, ul);
+    }
+    const ps = Object.values(GROUPS).flat().map(priceOf);
+    const min = Math.min(...ps);
+    $("pack-price").textContent = ps.every(p => p === min) ? `${min} ₪` : `החל מ-${min} ₪`;
+  }
+
+  function tapFlavor(f) {
+    let i = lines.findIndex(l => l.flavor === f);
+    if (i === -1) {
+      if (!lines[0].flavor) { lines[0].flavor = f; i = 0; }
+      else { lines.push({ flavor: f, qty: 1 }); i = lines.length - 1; }
+      render();
+    }
+    const row = $("lines").children[i];
+    row.scrollIntoView({ block: "center" });
+    row.classList.remove("flash"); void row.offsetWidth; row.classList.add("flash");
+  }
+
+  const esc = t => t.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  function selectHtml(value) {
+    let h = `<option value="">בחרו טעם</option>`;
+    for (const [g, fs] of Object.entries(GROUPS)) {
+      h += `<optgroup label="${esc(g)}">` + fs.map(f => `<option value="${esc(f)}"${f === value ? " selected" : ""}>${esc(f)}</option>`).join("") + `</optgroup>`;
+    }
+    return h;
+  }
+
+  function render() {
+    const box = $("lines");
+    box.innerHTML = "";
+    lines.forEach((l, i) => {
+      const row = document.createElement("div");
+      row.className = "line";
+      row.innerHTML = `
+        <div><label for="f${i}">טעם</label><select id="f${i}">${selectHtml(l.flavor)}</select></div>
+        <div><label for="q${i}">כמות</label><input id="q${i}" type="number" inputmode="numeric" min="1" step="1" value="${l.qty}"></div>
+        <button type="button" class="remove" aria-label="הסרת שורה"${lines.length > 1 ? "" : " hidden"}>×</button>`;
+      row.querySelector("select").addEventListener("change", e => {
+        const f = e.target.value, other = lines.findIndex((x, j) => j !== i && x.flavor === f);
+        if (f && other !== -1) {
+          lines[other].qty = (lines[other].qty || 0) + (lines[i].qty || 0);
+          lines.splice(i, 1);
+        } else lines[i].flavor = f;
+        render();
+      });
+      row.querySelector("input").addEventListener("input", e => {
+        const n = Number(e.target.value);
+        lines[i].qty = Number.isInteger(n) && n >= 1 ? n : 0;
+        update();
+      });
+      row.querySelector(".remove").addEventListener("click", () => { lines.splice(i, 1); render(); });
+      box.appendChild(row);
+    });
+    update();
+  }
+
+  const filled = () => lines.filter(l => l.flavor && l.qty >= 1);
+  const packs = () => filled().reduce((s, l) => s + l.qty, 0);
+  const sum = () => filled().reduce((s, l) => s + l.qty * priceOf(l.flavor), 0);
+  const totalText = () => `סה״כ: ${packs()} אריזות · ${sum()} ₪`;
+  const detail = () => filled().map(l => `${l.flavor} × ${l.qty}`).join(", ");
+
+  function update() {
+    $("total").textContent = totalText();
+    document.querySelectorAll(".flavor").forEach(b =>
+      b.setAttribute("aria-pressed", lines.some(l => l.flavor === b.dataset.flavor)));
+    const name = $("name").value.trim(), phone = $("phone").value;
+    if (phoneOk(phone)) $("err-phone").textContent = "";
+    else if (touched.phone) $("err-phone").textContent = "כתבו מספר טלפון נייד";
+    $("err-name").textContent = touched.name && !name ? "כתבו שם" : "";
+    $("err-lines").textContent = lines.some(l => l.flavor && !l.qty) ? "כתבו כמה אריזות" : "";
+    const ready = filled().length && !lines.some(l => l.flavor && !l.qty) && name && phoneOk(phone);
+    $("send").disabled = !ready || !connected;
+    if (!connected) $("err-send").textContent = "ההזמנות עדיין לא מחוברות. בינתיים אפשר לכתוב לאהוד בוואטסאפ";
+  }
+
+  $("add").addEventListener("click", () => { lines.push({ flavor: "", qty: 1 }); render(); $("f" + (lines.length - 1)).focus(); });
+  $("name").addEventListener("input", update);
+  $("phone").addEventListener("input", update);
+  $("name").addEventListener("blur", () => { touched.name = true; update(); });
+  $("phone").addEventListener("blur", () => { touched.phone = true; update(); });
+
+  $("order").addEventListener("submit", e => {
+    e.preventDefault();
+    touched = { name: true, phone: true };
+    if (!filled().length) $("err-lines").textContent = "בחרו טעם אחד לפחות";
+    update();
+    if ($("send").disabled) return;
+
+    const values = {
+      name: $("name").value.trim(), phone: $("phone").value.trim(), detail: detail(),
+      packs: String(packs()), total: `${sum()} ₪`, note: $("note").value.trim()
+    };
+    const f = document.createElement("form");
+    f.method = "POST"; f.action = FORM.action; f.target = "sink"; f.className = "hidden";
+    for (const [k, v] of Object.entries(values)) {
+      const inp = document.createElement("input");
+      inp.name = FORM.entries[k]; inp.value = v; f.appendChild(inp);
+    }
+    document.body.appendChild(f);
+    $("send").disabled = true; $("err-send").textContent = "";
+
+    // A cross-origin iframe can't tell us success, so load = sent, offline/timeout = failed.
+    let settled = false;
+    const fail = () => { if (settled) return; settled = true; f.remove();
+      $("err-send").textContent = "ההזמנה לא נשלחה. נסו שוב, או כתבו לאהוד בוואטסאפ"; update(); };
+    if (!navigator.onLine) return fail();
+    $("sink").onload = () => { if (settled) return; settled = true; f.remove(); showDone(values); };
+    setTimeout(fail, 15000);
+    f.submit();
+  });
+
+  function showDone(v) {
+    $("sum-lines").innerHTML = "";
+    filled().forEach(l => { const li = document.createElement("li"); li.textContent = `${l.flavor} × ${l.qty}`; $("sum-lines").appendChild(li); });
+    $("sum-total").textContent = totalText();
+    $("sum-who").textContent = `${v.name} · ${v.phone}`;
+    $("order").classList.add("hidden");
+    $("done").classList.remove("hidden"); $("done").classList.add("swap");
+    $("main").scrollIntoView({ block: "start" }); $("done").focus();
+  }
+
+  $("again").addEventListener("click", () => {
+    lines = [{ flavor: "", qty: 1 }]; touched = { name: false, phone: false };
+    $("order").reset(); $("done").classList.add("hidden");
+    $("order").classList.remove("hidden"); $("order").classList.add("swap");
+    render(); $("f0").focus();
+  });
+
+  renderMenu(); render();
+  loadMenu().then(() => { renderMenu(); render(); });
+</script>
+</body>
+</html>
