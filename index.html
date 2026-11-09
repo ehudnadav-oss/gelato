@@ -13,18 +13,30 @@
     --gold: #A6844A; --fig: #8C4A48; --wa: #1F8A4C;
   }
   * { box-sizing: border-box; }
-  html { background: var(--paper); }
+  html { background: #FDDEC4 url("shimmer.png") 0 0 / 256px repeat; }
   body {
     margin: 0 auto; max-width: 480px; padding: 0 20px calc(96px + env(safe-area-inset-bottom));
     color: var(--ink); font: 400 17px/1.55 Heebo, sans-serif;
     background-color: var(--paper);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .23 0 0 0 0 .16 0 0 0 0 .11 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"), radial-gradient(ellipse at 50% 0, rgba(255,250,238,.55), transparent 60%);
     background-size: 160px 160px, 100% 700px; background-repeat: repeat, no-repeat;
-    position: relative; overflow-x: clip;
+    position: relative; overflow-x: clip; isolation: isolate;
   }
-  .deco { position: absolute; pointer-events: none; opacity: .5; mix-blend-mode: multiply; z-index: 0;
-    -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 45%, transparent 100%);
-            mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 45%, transparent 100%); }
+  /* The flyer's drawings, scattered down the page edges; they scroll with the page, behind the content */
+  body { background: #FDDEC4 url("shimmer.png") 0 0 / 256px repeat; }
+  body::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(ellipse 90% 500px at 50% 0, #FFF5EB, transparent),
+                radial-gradient(ellipse 70% 30% at 0 60%, rgba(255,240,235,.6), transparent),
+                radial-gradient(ellipse 70% 30% at 100% 35%, rgba(255,236,226,.6), transparent); }
+  header, .order-h, footer { position: relative; }
+  header::before, .order-h::before, .order-h::after, footer::before, footer::after {
+    content: ""; position: absolute; z-index: -1; pointer-events: none; opacity: .8;
+    background: center / contain no-repeat; }
+  header::before { background-image: url("d-figs.webp"); right: -22px; top: 0; width: 120px; height: 134px; }
+  .order-h::before { background-image: url("d-olive.webp"); left: -12px; top: -62px; width: 38px; height: 92px; }
+  .order-h::after { background-image: url("d-cup-r.webp"); right: -14px; top: -62px; width: 48px; height: 92px; }
+  footer::before { background-image: url("d-coconut.webp"); left: -20px; bottom: 40px; width: 96px; height: 116px; }
+  footer::after { background-image: url("d-cup-r.webp"); display: none; }
   .anchor { position: relative; }
   .ico { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; vertical-align: -4px; }
   h2 .ico { width: 22px; height: 22px; color: var(--gold); margin-inline-end: 6px; vertical-align: -3px; }
@@ -151,12 +163,8 @@
   // The "תפריט" tab, published as CSV (see README.md). Empty = use the built-in menu below.
   const MENU_CSV = "https://docs.google.com/spreadsheets/d/15h9Ni9Jbbqc5319fKYvOvXE94kb37eKQyTR32AQW_XA/gviz/tq?tqx=out:csv&sheet=%D7%AA%D7%A4%D7%A8%D7%99%D7%98";
 </script>
-
-<img class="deco" src="swirl.jpg" alt="" style="left:2px; top:24px; width:44px">
-<img class="deco" src="swirlr.jpg" alt="" style="right:4px; top:110px; width:40px">
 <header class="center">
   <img class="cup soft" src="cup.jpg" alt="גביע ג'לטו">
-  <p class="ribbon">טבעי שזה טעים</p>
   <h1>ג'לטו איטלקי בעבודת יד</h1>
   <p class="promise">טעם עשיר, מחומרי גלם טבעיים ואורגניים<br>ללא אבקות, מייצבים או תוספת סוכר</p>
 </header>
@@ -175,7 +183,6 @@
 <div class="orn" aria-hidden="true"><span></span></div>
 
 <main id="main" class="anchor">
-  <img class="deco" src="olive.jpg" alt="" style="left:0; top:-34px; width:72px">
   <h2 class="order-h">ההזמנה</h2>
   <form id="order" novalidate>
     <div id="lines"></div>
@@ -198,7 +205,6 @@
       <textarea id="note" placeholder="משהו שאהוד צריך לדעת?"></textarea>
     </div>
 
-    <p class="note">לכל אריזה טעם אחד. אפשר לבחור כמה אריזות, כל אחת בטעם אחר.</p>
     <button type="submit" class="send" id="send" disabled>שליחת הזמנה</button>
     <p class="err" id="err-send" aria-live="polite"></p>
   </form>
@@ -215,7 +221,6 @@
 </main>
 
 <footer class="anchor">
-  <img class="deco" src="coconut.jpg" alt="" style="left:0; top:0; width:80px">
   <img class="fruit soft" src="fruit.jpg" alt="">
   <ul class="facts">
     <li><svg class="ico"><use href="#i-cal"/></svg>הזמנה מראש</li>
